@@ -1,6 +1,7 @@
 package com.Registration.Form;
 
-import javax.persistence.CascadeType;
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,7 +11,9 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+//Entity class for storing Business Information data
 @Entity
 public class BusinessInfo {
 
@@ -31,11 +34,11 @@ public class BusinessInfo {
 	private String streetAddress;
 	
 	@NotNull
-	@Size(max=6)
+	@Size(min=6,max=6)
 	private String zipCode;
 	
 	@NotNull
-	@Size(max=10)
+	@Size(min=10,max=10)
 	private String companyPhone;
 	
 	@NotNull
@@ -43,7 +46,8 @@ public class BusinessInfo {
 	private String website;
 	
 	@NotNull
-	private String dateOfIncorporation;
+	@JsonFormat(pattern="yyyy-MM-dd")
+	private Date dateOfIncorporation;
 	
 	@NotNull
 	private String country;
@@ -68,20 +72,11 @@ public class BusinessInfo {
 		this.registration = registration;
 	}
 
+	//One To One Mapping with Registration table
 	@OneToOne(fetch=FetchType.LAZY,optional=false)
 	@JoinColumn(name="registration_id",nullable=false)
 	private Registration registration;
 
-	@OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL,mappedBy="businessInfo")
-	private AuthorizedInfo authorizedInfo;
-	
-	public AuthorizedInfo getAuthorizedInfo() {
-		return authorizedInfo;
-	}
-
-	public void setAuthorizedInfo(AuthorizedInfo authorizedInfo) {
-		this.authorizedInfo = authorizedInfo;
-	}
 
 	public Long getId() {
 		return id;
@@ -139,11 +134,11 @@ public class BusinessInfo {
 		this.website = website;
 	}
 
-	public String getDateOfIncorporation() {
+	public Date getDateOfIncorporation() {
 		return dateOfIncorporation;
 	}
 
-	public void setDateOfIncorporation(String dateOfIncorporation) {
+	public void setDateOfIncorporation(Date dateOfIncorporation) {
 		this.dateOfIncorporation = dateOfIncorporation;
 	}
 
@@ -199,9 +194,8 @@ public class BusinessInfo {
 	public BusinessInfo(@NotNull @Size(max = 25) String companyName, @NotNull @Size(max = 25) String tax,
 			@NotNull @Size(max = 25) String streetAddress, @NotNull @Size(max = 6) String zipCode,
 			@NotNull @Size(max = 10) String companyPhone, @NotNull @Size(max = 25) String website,
-			@NotNull String dateOfIncorporation, @NotNull String country, @NotNull String statee, @NotNull String city,
-			@NotNull String stateOfInc, @NotNull String cityOfInc, Registration registration,
-			AuthorizedInfo authorizedInfo) {
+			@NotNull Date dateOfIncorporation, @NotNull String country, @NotNull String statee, @NotNull String city,
+			@NotNull String stateOfInc, @NotNull String cityOfInc) {
 		super();
 		this.companyName = companyName;
 		this.tax = tax;
@@ -215,8 +209,6 @@ public class BusinessInfo {
 		this.city = city;
 		this.stateOfInc = stateOfInc;
 		this.cityOfInc = cityOfInc;
-		this.registration = registration;
-		this.authorizedInfo = authorizedInfo;
 	}
 
 	protected BusinessInfo() {}

@@ -15,10 +15,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-
-
+//Entity class for storing Registration data for new user
 @Entity
 public class Registration {
 
@@ -37,6 +37,7 @@ public class Registration {
 	@NotNull
 	@Email
 	@Size(max=50)
+	@Column(unique=true)
 	private String userName;
 	
 	@NotNull
@@ -51,21 +52,31 @@ public class Registration {
 	
 	@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
-    @CreatedDate
+    @CreationTimestamp
     private Date createdAt;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private Date updatedAt;
 	
 	private int active=0;
 	
+	//Foreign key in Business Information table
 	@OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL,mappedBy="registration")
 	private BusinessInfo businessInfo;
 	
-	
+	//Foreign key in Authorized Signer Information table
+	@OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL,mappedBy="registration")
+	private AuthorizedInfo authorizedInfo;
 
-	public Registration( @NotNull @Size(max = 25) String firstName, @NotNull @Size(max = 25) String lastName,
+
+	public Registration(Long id, @NotNull @Size(max = 25) String firstName, @NotNull @Size(max = 25) String lastName,
 			@NotNull @Email @Size(max = 50) String userName, @NotNull @Size(max = 25) String companyName,
-			@NotNull @Size(max = 25) String password, Long code, Date createdAt, int active,
-			BusinessInfo businessInfo) {
+			@NotNull @Size(max = 25) String password, Long code, Date createdAt, Date updatedAt, int active,
+			BusinessInfo businessInfo, AuthorizedInfo authorizedInfo) {
 		super();
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.userName = userName;
@@ -73,8 +84,18 @@ public class Registration {
 		this.password = password;
 		this.code = code;
 		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 		this.active = active;
 		this.businessInfo = businessInfo;
+		this.authorizedInfo = authorizedInfo;
+	}
+
+	public AuthorizedInfo getAuthorizedInfo() {
+		return authorizedInfo;
+	}
+
+	public void setAuthorizedInfo(AuthorizedInfo authorizedInfo) {
+		this.authorizedInfo = authorizedInfo;
 	}
 
 	public Date getCreatedAt() {

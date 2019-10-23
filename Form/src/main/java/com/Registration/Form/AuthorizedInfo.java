@@ -1,12 +1,19 @@
 package com.Registration.Form;
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+//Entity class for storing Authorized Signer Information data
 @Entity
 public class AuthorizedInfo {
 
@@ -14,33 +21,40 @@ public class AuthorizedInfo {
 	@GeneratedValue
 	private Long id;
 	
+	@NotNull
+	@Size(max=25)
 	private String firstName;
 	
+	@NotNull
+	@Size(max=25)
 	private String lastName;
 	
+	@NotNull
+	@Size(max=25)
 	private String streetAddress;
 	
+	@NotNull
 	private String country;
 	
+	@NotNull
 	private String state;
 	
+	@NotNull
 	private String city;
 	
+	@NotNull
+	@Size(min=6,max=6)
 	private String zipCode;
 	
-	private String dateOfBirth;
+	@NotNull
+	@Past
+	@JsonFormat(pattern="yyyy-MM-dd")
+	private Date dateOfBirth;
 	
+	//One To One Mapping with Registration table
 	@OneToOne(fetch=FetchType.LAZY,optional=false)
-	@JoinColumn(name="businessinfo_id",nullable=false)
-	private BusinessInfo businessInfo;
-	
-	public BusinessInfo getBusinessInfo() {
-		return businessInfo;
-	}
-
-	public void setBusinessInfo(BusinessInfo businessInfo) {
-		this.businessInfo = businessInfo;
-	}
+	@JoinColumn(name="registration_id",nullable=false)
+	private Registration registration;
 
 	protected AuthorizedInfo() {}
 
@@ -108,17 +122,17 @@ public class AuthorizedInfo {
 		this.zipCode = zipCode;
 	}
 
-	public String getDateOfBirth() {
+	public Date getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(String dateOfBirth) {
+	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 
 
 	public AuthorizedInfo(String firstName, String lastName, String streetAddress, String country, String state,
-			String city, String zipCode, String dateOfBirth, BusinessInfo businessInfo) {
+			String city, String zipCode, Date dateOfBirth) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -128,7 +142,14 @@ public class AuthorizedInfo {
 		this.city = city;
 		this.zipCode = zipCode;
 		this.dateOfBirth = dateOfBirth;
-		this.businessInfo = businessInfo;
+	}
+
+	public Registration getRegistration() {
+		return registration;
+	}
+
+	public void setRegistration(Registration registration) {
+		this.registration = registration;
 	}
 
 	@Override
